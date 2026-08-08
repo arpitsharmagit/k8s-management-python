@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-label="Feature cards overview for platform">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#111827"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="c1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0ea5e9"/>
+      <stop offset="100%" stop-color="#0369a1"/>
+    </linearGradient>
+    <linearGradient id="c2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#22c55e"/>
+      <stop offset="100%" stop-color="#166534"/>
+    </linearGradient>
+    <linearGradient id="c3" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#92400e"/>
+    </linearGradient>
+    <linearGradient id="c4" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#a855f7"/>
+      <stop offset="100%" stop-color="#6b21a8"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <text x="90" y="98" fill="#f8fafc" font-family="Segoe UI, Arial, sans-serif" font-size="44" font-weight="700">Capability Feature Cards</text>
+  <text x="90" y="138" fill="#cbd5e1" font-family="Segoe UI, Arial, sans-serif" font-size="24">Portfolio-ready visual summary for README and social previews</text>
+
+  <g font-family="Segoe UI, Arial, sans-serif">
+    <rect x="90" y="210" width="700" height="250" rx="24" fill="url(#c1)"/>
+    <text x="130" y="280" fill="#e0f2fe" font-size="36" font-weight="700">Async API Gateway</text>
+    <text x="130" y="330" fill="#e0f2fe" font-size="24">FastAPI endpoints for auth, devices, telemetry, and command routing.</text>
+    <text x="130" y="370" fill="#bae6fd" font-size="22">Includes OpenAPI docs and health probes.</text>
+
+    <rect x="810" y="210" width="700" height="250" rx="24" fill="url(#c2)"/>
+    <text x="850" y="280" fill="#dcfce7" font-size="36" font-weight="700">Event-Driven Processing</text>
+    <text x="850" y="330" fill="#dcfce7" font-size="24">Celery workers execute background jobs via Redis broker and pub/sub.</text>
+    <text x="850" y="370" fill="#bbf7d0" font-size="22">Designed for reliable telemetry throughput.</text>
+
+    <rect x="90" y="500" width="700" height="250" rx="24" fill="url(#c3)"/>
+    <text x="130" y="570" fill="#fffbeb" font-size="36" font-weight="700">IoT Messaging Mesh</text>
+    <text x="130" y="620" fill="#fef3c7" font-size="24">MQTT transport via Mosquitto bridges devices with API workflows.</text>
+    <text x="130" y="660" fill="#fde68a" font-size="22">Supports real-time device telemetry ingestion.</text>
+
+    <rect x="810" y="500" width="700" height="250" rx="24" fill="url(#c4)"/>
+    <text x="850" y="570" fill="#faf5ff" font-size="36" font-weight="700">Kubernetes Control Plane</text>
+    <text x="850" y="620" fill="#f3e8ff" font-size="24">PySide6 desktop app for pods, deployments, logs, and cluster operations.</text>
+    <text x="850" y="660" fill="#e9d5ff" font-size="22">Operational visibility for fleet management.</text>
+  </g>
+</svg>

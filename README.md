@@ -54,11 +54,25 @@ sequenceDiagram
 
 ## Visual Showcase
 
-Use this section for portfolio screenshots. Add images under `docs/images/`.
+The docs/images folder now contains reusable visual assets for GitHub portfolio presentation.
 
-![FastAPI Swagger UI](docs/images/fastapi-docs.svg)
-![Flask Admin Dashboard](docs/images/flask-admin-dashboard.svg)
-![Desktop Cluster Monitor](docs/images/desktop-cluster-panel.svg)
+### Architecture Board
+
+![Architecture Board](docs/images/architecture-board.svg)
+
+### Workflow Board
+
+![Workflow Board](docs/images/workflow-board.svg)
+
+### Feature Cards
+
+![Feature Cards](docs/images/feature-cards.svg)
+
+### App Screenshot Placeholders
+
+![FastAPI Swagger UI Placeholder](docs/images/fastapi-docs.svg)
+![Flask Admin Dashboard Placeholder](docs/images/flask-admin-dashboard.svg)
+![Desktop Cluster Monitor Placeholder](docs/images/desktop-cluster-panel.svg)
 
 ## Repository Layout
 
@@ -118,12 +132,3 @@ chmod +x run.sh
 ./run.sh worker
 ./run.sh desktop
 ```
-
-## Professional Notes
-
-This repository is structured to showcase practical Python backend engineering:
-
-- Clear separation of API, worker, desktop, and admin concerns
-- Event-driven architecture with asynchronous processing
-- Container-first setup for reproducible local development
-- Real-world integrations across IoT messaging and Kubernetes operations
