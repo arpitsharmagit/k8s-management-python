@@ -4,7 +4,7 @@ from __future__ import annotations
 import logging
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 
 from app.api.dependencies import get_current_user, get_device_service, require_role
 from app.api.schemas.device_schema import (
@@ -92,6 +92,8 @@ async def get_device(
 @router.delete(
     "/{device_id}",
     status_code=status.HTTP_204_NO_CONTENT,
+    response_class=Response,
+    response_model=None,
     summary="Delete a device (admin only)",
     dependencies=[Depends(require_role(Role.ADMIN))],
 )

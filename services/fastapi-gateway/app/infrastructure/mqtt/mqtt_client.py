@@ -23,7 +23,7 @@ class MQTTClient:
         self._client = mqtt.Client(
             client_id=settings.MQTT_CLIENT_ID,
             clean_session=True,
-            protocol=mqtt.MQTTv5,
+            protocol=mqtt.MQTTv311,
         )
         self._client.on_connect = self._on_connect
         self._client.on_disconnect = self._on_disconnect
