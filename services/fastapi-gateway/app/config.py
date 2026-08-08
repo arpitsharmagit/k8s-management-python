@@ -27,6 +27,11 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     JWT_EXPIRE_MINUTES: int = 60
 
+    # Default bootstrap admin (local/dev convenience)
+    ADMIN_USERNAME: str = "admin"
+    ADMIN_PASSWORD: str = "admin_password"
+    ADMIN_EMAIL: str = "admin@iot.local"
+
     # Database
     DATABASE_URL: str = "sqlite+aiosqlite:///./iot_platform.db"
 

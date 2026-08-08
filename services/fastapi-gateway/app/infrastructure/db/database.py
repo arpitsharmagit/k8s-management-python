@@ -35,6 +35,27 @@ async def init_db() -> None:
     async with engine.begin() as conn:
         from app.infrastructure.db import models  # noqa: F401 — registers models
         await conn.run_sync(Base.metadata.create_all)
+
+    # Create a default admin user for local/dev environments if it does not exist.
+    from app.application.auth_service import auth_service
+    from app.domain.models.user import Role, User
+    from app.infrastructure.db.repos.user_repo_impl import SQLUserRepository
+
+    async with AsyncSessionFactory() as session:
+        repo = SQLUserRepository(session)
+        existing = await repo.find_by_username(settings.ADMIN_USERNAME)
+        if not existing:
+            admin_user = User(
+                username=settings.ADMIN_USERNAME,
+                email=settings.ADMIN_EMAIL,
+                hashed_password=auth_service.hash_password(settings.ADMIN_PASSWORD),
+                role=Role.ADMIN,
+                is_active=True,
+            )
+            await repo.save(admin_user)
+            await session.commit()
+            logger.info("Bootstrap admin user created: %s", settings.ADMIN_USERNAME)
+
     logger.info("Database tables initialised.")
 
 
