@@ -70,9 +70,10 @@ The docs/images folder now contains reusable visual assets for GitHub portfolio 
 
 ### App Screenshot Placeholders
 
-![FastAPI Swagger UI Placeholder](docs/images/fastapi-docs.png)
-![Flask Admin Dashboard Placeholder](docs/images/flask-admin-dashboard.png)
-![Desktop Cluster Monitor Placeholder](docs/images/desktop-cluster-panel.png)
+![FastAPI Swagger UI ](docs/images/fastapi-docs.png)
+![Flask Admin Dashboard ](docs/images/flask-admin-dashboard.png)
+![Desktop Cluster Monitor ](docs/images/desktop-cluster-panel.png)
+![Flask Admin Devices ](docs/images/admin-dashboard.png)
 
 ## Repository Layout
 
