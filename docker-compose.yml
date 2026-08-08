@@ -1,0 +1,136 @@
+version: "3.9"
+
+networks:
+  iot_net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  mosquitto_data:
+  mosquitto_log:
+
+services:
+  # ─── Infrastructure ──────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: iot_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-iot_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-iot_pass}
+      POSTGRES_DB: ${POSTGRES_DB:-iot_platform}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infra/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "5432:5432"
+    networks:
+      - iot_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-iot_user} -d ${POSTGRES_DB:-iot_platform}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: iot_redis
+    restart: unless-stopped
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - iot_net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: iot_mosquitto
+    restart: unless-stopped
+    volumes:
+      - ./infra/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - mosquitto_data:/mosquitto/data
+      - mosquitto_log:/mosquitto/log
+    ports:
+      - "1883:1883"   # MQTT
+      - "9001:9001"   # MQTT over WebSocket
+    networks:
+      - iot_net
+
+  # ─── Application Services ────────────────────────────────────────────────────
+  fastapi-gateway:
+    build:
+      context: ./services/fastapi-gateway
+      dockerfile: Dockerfile
+    container_name: iot_fastapi
+    restart: unless-stopped
+    env_file:
+      - ./services/fastapi-gateway/.env
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-iot_user}:${POSTGRES_PASSWORD:-iot_pass}@postgres:5432/${POSTGRES_DB:-iot_platform}
+      - REDIS_URL=redis://redis:6379/0
+      - MQTT_HOST=mosquitto
+      - MQTT_PORT=1883
+    ports:
+      - "8000:8000"
+    networks:
+      - iot_net
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mosquitto:
+        condition: service_started
+
+  flask-admin:
+    build:
+      context: ./services/flask-admin
+      dockerfile: Dockerfile
+    container_name: iot_flask
+    restart: unless-stopped
+    env_file:
+      - ./services/flask-admin/.env
+    environment:
+      - FASTAPI_BASE_URL=http://fastapi-gateway:8000
+    ports:
+      - "5000:5000"
+    networks:
+      - iot_net
+    depends_on:
+      - fastapi-gateway
+
+  celery-worker:
+    build:
+      context: ./services/celery-worker
+      dockerfile: Dockerfile
+    container_name: iot_celery
+    restart: unless-stopped
+    env_file:
+      - ./services/celery-worker/.env
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/1
+      - REDIS_PUBSUB_URL=redis://redis:6379/0
+      - DATABASE_URL=postgresql+psycopg2://${POSTGRES_USER:-iot_user}:${POSTGRES_PASSWORD:-iot_pass}@postgres:5432/${POSTGRES_DB:-iot_platform}
+      - MQTT_HOST=mosquitto
+      - MQTT_PORT=1883
+    networks:
+      - iot_net
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      mosquitto:
+        condition: service_started
+    command: >
+      sh -c "celery -A app.celery_app worker --loglevel=info &
+             python -m app.subscribers.redis_subscriber"

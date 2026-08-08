@@ -1,0 +1,60 @@
+# -----------------------------
+# OS and editor files
+# -----------------------------
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# -----------------------------
+# Python cache and artifacts
+# -----------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+dist/
+build/
+.eggs/
+*.egg-info/
+pip-wheel-metadata/
+
+# -----------------------------
+# Virtual environments
+# -----------------------------
+.venv/
+venv/
+env/
+ENV/
+services/*/.venv/
+services/*/venv/
+
+# -----------------------------
+# Environment and secrets
+# -----------------------------
+.env
+.env.*
+!.env.example
+services/*/.env
+services/*/.env.*
+!services/*/.env.example
+
+# -----------------------------
+# Logs and temporary files
+# -----------------------------
+*.log
+*.pid
+*.tmp
+*.bak
+
+# -----------------------------
+# Tooling
+# -----------------------------
+.ipynb_checkpoints/

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Devices — IoT Platform Admin{% endblock %}
+{% block page_title %}Registered Devices{% endblock %}
+
+{% block content %}
+<div class="table-card" id="devices-table-card">
+  <div class="table-header">
+    <h3>Device Fleet</h3>
+    <span class="badge-count">{{ devices|length }} devices</span>
+  </div>
+  <div class="table-scroll">
+    <table class="data-table" id="devices-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Status</th>
+          <th>Location</th>
+          <th>Firmware</th>
+          <th>MQTT Topic</th>
+          <th>Registered</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for device in devices %}
+        <tr id="device-row-{{ device.id }}">
+          <td class="mono small">{{ device.id[:8] }}…</td>
+          <td><strong>{{ device.name }}</strong></td>
+          <td>{{ device.device_type }}</td>
+          <td><span class="badge badge-{{ device.status }}">{{ device.status }}</span></td>
+          <td>{{ device.location or '—' }}</td>
+          <td class="mono">{{ device.firmware_version }}</td>
+          <td class="mono small">{{ device.mqtt_topic }}</td>
+          <td class="small">{{ device.created_at[:10] if device.created_at else '—' }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" class="empty-row">No devices registered. Use the FastAPI gateway to register devices.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination">
+    {% if page > 1 %}
+    <a href="{{ url_for('dashboard.devices', page=page-1) }}" class="btn-secondary" id="prev-page-btn">← Previous</a>
+    {% endif %}
+    <span class="page-indicator">Page {{ page }}</span>
+    {% if devices|length == 20 %}
+    <a href="{{ url_for('dashboard.devices', page=page+1) }}" class="btn-secondary" id="next-page-btn">Next →</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

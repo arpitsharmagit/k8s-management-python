@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}Telemetry — IoT Platform Admin{% endblock %}
+{% block page_title %}Telemetry Explorer{% endblock %}
+
+{% block content %}
+<!-- Device selector -->
+<div class="filter-bar" id="telemetry-filter-bar">
+  <form method="GET" action="{{ url_for('dashboard.telemetry') }}" id="device-select-form">
+    <label for="device_id_select">Select Device:</label>
+    <select name="device_id" id="device_id_select" class="form-select" onchange="this.form.submit()">
+      <option value="">— Choose a device —</option>
+      {% for d in devices %}
+      <option value="{{ d.id }}" {% if d.id == selected_device_id %}selected{% endif %}>
+        {{ d.name }} ({{ d.device_type }})
+      </option>
+      {% endfor %}
+    </select>
+  </form>
+</div>
+
+{% if selected_device_id and telemetry %}
+<!-- Chart -->
+<div class="chart-card full-width">
+  <h3 class="chart-title">Temperature & Humidity (last 30 readings)</h3>
+  <div class="chart-container tall">
+    <canvas id="telemetryChart"></canvas>
+  </div>
+</div>
+
+<!-- Raw data table -->
+<div class="table-card" id="telemetry-data-table-card">
+  <h3>Raw Telemetry Records</h3>
+  <div class="table-scroll">
+    <table class="data-table" id="telemetry-data-table">
+      <thead>
+        <tr>
+          <th>Timestamp</th><th>Temp °C</th><th>Humidity %</th>
+          <th>Pressure hPa</th><th>Battery %</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for t in telemetry %}
+        <tr>
+          <td class="mono">{{ t.timestamp[:19] if t.timestamp else '—' }}</td>
+          <td>{{ t.temperature | round(1) if t.temperature is not none else '—' }}</td>
+          <td>{{ t.humidity | round(1) if t.humidity is not none else '—' }}</td>
+          <td>{{ t.pressure | round(1) if t.pressure is not none else '—' }}</td>
+          <td>{{ t.battery_level | round(1) if t.battery_level is not none else '—' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  const labels = {{ telemetry | map(attribute='timestamp') | list | tojson }};
+  const temps  = {{ telemetry | map(attribute='temperature') | list | tojson }};
+  const hums   = {{ telemetry | map(attribute='humidity') | list | tojson }};
+
+  const ctx = document.getElementById('telemetryChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels.map(l => l ? l.slice(0, 19) : ''),
+      datasets: [
+        {
+          label: 'Temperature (°C)',
+          data: temps,
+          borderColor: '#f59e0b',
+          backgroundColor: 'rgba(245, 158, 11, 0.1)',
+          tension: 0.4, fill: true,
+        },
+        {
+          label: 'Humidity (%)',
+          data: hums,
+          borderColor: '#38bdf8',
+          backgroundColor: 'rgba(56, 189, 248, 0.1)',
+          tension: 0.4, fill: true,
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: {
+        x: { ticks: { color: '#94a3b8', maxTicksLimit: 8 }, grid: { color: '#334155' } },
+        y: { ticks: { color: '#94a3b8' }, grid: { color: '#334155' } }
+      },
+      plugins: { legend: { labels: { color: '#cbd5e1' } } }
+    }
+  });
+</script>
+{% elif selected_device_id %}
+<div class="empty-state">No telemetry data found for this device yet.</div>
+{% else %}
+<div class="empty-state">Select a device above to view its telemetry history.</div>
+{% endif %}
+{% endblock %}

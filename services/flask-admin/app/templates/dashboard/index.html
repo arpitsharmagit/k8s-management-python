@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — IoT Platform Admin{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- Summary Cards -->
+<div class="card-grid">
+  <div class="stat-card">
+    <div class="stat-icon">📡</div>
+    <div class="stat-body">
+      <div class="stat-value" id="total-devices-count">{{ total_devices }}</div>
+      <div class="stat-label">Total Devices</div>
+    </div>
+  </div>
+  <div class="stat-card online">
+    <div class="stat-icon">🟢</div>
+    <div class="stat-body">
+      <div class="stat-value" id="online-devices-count">{{ online }}</div>
+      <div class="stat-label">Online</div>
+    </div>
+  </div>
+  <div class="stat-card offline">
+    <div class="stat-icon">🔴</div>
+    <div class="stat-body">
+      <div class="stat-value" id="offline-devices-count">{{ offline }}</div>
+      <div class="stat-label">Offline / Provisioning</div>
+    </div>
+  </div>
+</div>
+
+<!-- Status Donut Chart -->
+<div class="chart-row">
+  <div class="chart-card">
+    <h3 class="chart-title">Device Status Distribution</h3>
+    <div class="chart-container">
+      <canvas id="statusChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Recent Devices -->
+  <div class="chart-card">
+    <h3 class="chart-title">Recently Registered Devices</h3>
+    <table class="data-table" id="recent-devices-table">
+      <thead>
+        <tr>
+          <th>Name</th><th>Type</th><th>Status</th><th>Location</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for device in recent_devices %}
+        <tr>
+          <td>{{ device.name }}</td>
+          <td>{{ device.device_type }}</td>
+          <td><span class="badge badge-{{ device.status }}">{{ device.status }}</span></td>
+          <td>{{ device.location or '—' }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4" class="empty-row">No devices registered yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  const ctx = document.getElementById('statusChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Online', 'Offline / Provisioning'],
+      datasets: [{
+        data: [{{ online }}, {{ offline }}],
+        backgroundColor: ['#4ade80', '#f87171'],
+        borderColor: ['#22c55e', '#ef4444'],
+        borderWidth: 2,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { color: '#cbd5e1' } }
+      }
+    }
+  });
+</script>
+{% endblock %}

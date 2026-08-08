@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="IoT Platform Admin — Manage devices, telemetry, and system health."/>
+  <title>{% block title %}IoT Platform Admin{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  {% if current_user.is_authenticated %}
+  <div class="layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <span class="brand-icon">⚡</span>
+        <span class="brand-text">IoT Admin</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="{{ url_for('dashboard.index') }}"
+           class="nav-item {% if request.endpoint == 'dashboard.index' %}active{% endif %}">
+          <span class="nav-icon">📊</span> Dashboard
+        </a>
+        <a href="{{ url_for('dashboard.devices') }}"
+           class="nav-item {% if request.endpoint == 'dashboard.devices' %}active{% endif %}">
+          <span class="nav-icon">📡</span> Devices
+        </a>
+        <a href="{{ url_for('dashboard.telemetry') }}"
+           class="nav-item {% if request.endpoint == 'dashboard.telemetry' %}active{% endif %}">
+          <span class="nav-icon">📈</span> Telemetry
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <span class="user-badge">{{ current_user.username }} · {{ current_user.role }}</span>
+        <a href="{{ url_for('auth.logout') }}" class="logout-btn">Logout</a>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main-content">
+      <header class="topbar">
+        <h1 class="page-title">{% block page_title %}Dashboard{% endblock %}</h1>
+      </header>
+
+      <!-- Flash messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flash-container">
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <div class="content-body">
+        {% block content %}{% endblock %}
+      </div>
+    </main>
+  </div>
+  {% else %}
+  <!-- Unauthenticated layout -->
+  <div class="auth-wrapper">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-container">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </div>
+  {% endif %}
+</body>
+</html>

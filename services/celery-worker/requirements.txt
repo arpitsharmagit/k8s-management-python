@@ -1,0 +1,7 @@
+# Celery Worker — Python Dependencies
+celery==5.4.0
+redis==5.0.7
+paho-mqtt==2.1.0
+sqlalchemy==2.0.31
+psycopg2-binary==2.9.9
+pydantic-settings==2.3.3
