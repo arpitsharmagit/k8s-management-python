@@ -9,7 +9,9 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 </head>
 <body>
-  {% if current_user.is_authenticated %}
+  {% set is_authenticated = current_user.is_authenticated %}
+
+  {% if is_authenticated %}
   <div class="layout">
     <!-- Sidebar -->
     <aside class="sidebar">
@@ -53,12 +55,6 @@
           </div>
         {% endif %}
       {% endwith %}
-
-      <div class="content-body">
-        {% block content %}{% endblock %}
-      </div>
-    </main>
-  </div>
   {% else %}
   <!-- Unauthenticated layout -->
   <div class="auth-wrapper">
@@ -71,7 +67,16 @@
         </div>
       {% endif %}
     {% endwith %}
-    {% block content %}{% endblock %}
+  {% endif %}
+
+    <div class="content-body">
+      {% block content %}{% endblock %}
+    </div>
+
+  {% if is_authenticated %}
+    </main>
+  </div>
+  {% else %}
   </div>
   {% endif %}
 </body>
